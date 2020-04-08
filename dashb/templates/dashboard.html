@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dash_nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toggles.css') }}">
+    <title>Dashboard</title>
+</head>
+<body>
+    {% include "_dash_nav.html" %}
+    <div class="container">
+        <div class="device" id="desk-light">
+            <p>Desk Light</p>
+            {% include '_toggle.html' %}
+        </div>
+        <div class="device" id="desk_strip">
+            <p>Desk Leds</p>
+            {% include '_toggle.html' %}
+        </div>
+        <div class="device" id="table-lamp">
+            <p>Table Lamp</p>
+            {% include '_toggle.html' %}
+        </div>
+        <div class="device" id="bed-lamp">
+            <p>Bed Lamp</p>
+            <button>Movie Mode</button>
+            {% include '_toggle.html' %}
+        </div>
+    </div>
+
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous">
+    </script>
+    <script src="{{ url_for('static', filename='scripts/dash.js') }}"></script>
+</body>
+</html>
