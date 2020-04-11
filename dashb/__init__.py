@@ -1,13 +1,34 @@
 from flask import Flask, render_template, url_for, request
 from flask_cors import CORS
-import paho.mqtt.client as mqtt
+from flask_mqtt import Mqtt
+# import paho.mqtt.client as mqtt
 import dashb.yeelight_helpers as ylight
 import json
+import os
+
 
 app = Flask(__name__)
+app.config['MQTT_BROKER_URL'] = os.environ.get('MQTT_BROKER')
+app.config['MQTT_BROKER_PORT'] = 1883
+# app.config['MQTT_USERNAME'] = 'user'
+# app.config['MQTT_PASSWORD'] = 'secret'
+app.config['MQTT_REFRESH_TIME'] = 1.0
+mqtt = Mqtt(app)
 CORS(app)
-client = mqtt.Client("SmartHome")
-client.connect("10.0.0.91")
+test_var = 0
+
+# client = mqtt.Client("SmartHome")
+@mqtt.on_connect()
+def handle_connect(client, userdata, flags, rc):
+    mqtt.subscribe('test/')
+
+@mqtt.on_message()
+def handle_mqtt_message(client, userdata, message):
+    data = dict(
+        topic=message.topic,
+        payload=message.payload.decode()
+    )
+    print(data['payload'])
 
 devices = {
     'desk' : 'desk-light',
@@ -25,7 +46,7 @@ def desk_light(device_name):
     device = device_name
     if request.method == 'POST':
         if 'payload' in request.json:
-            client.publish(request.json['topic'], json.dumps(request.json['payload']))
+            mqtt.publish(request.json['topic'], json.dumps(request.json['payload']))
             return "Success"
 
         if request.json['service'] == 'yeelight':
@@ -40,7 +61,7 @@ def desk_light(device_name):
 
         command = request.json['command']
         print("Powering", command)
-        client.publish(f'cmnd/lights/{device}/POWER', command)
+        mqtt.publish(f'cmnd/lights/{device}/POWER', command)
         return "Success"
     else: # Not sure what to do with GET, maybe for state checks?
         pass

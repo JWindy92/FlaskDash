@@ -3,6 +3,7 @@ import json
 f = open('.env', 'w')
 f.write('''
 FLASK_APP="dashb"
+MQTT_BROKER=""
 ''')
 f.close()
 
